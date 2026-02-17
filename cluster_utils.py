@@ -444,9 +444,10 @@ def compare_models(data, target_col, cluster_col, drop_cols=None,
     
     tree_data = data.drop(columns=drop_cols)
     
-    # Convert categorical variables
-    cat_cols = [target_col, cluster_col]
-    tree_data[cat_cols] = tree_data[cat_cols].astype('category')
+    # Convert categorical variables to category dtype if not already numeric
+    for col in [target_col, cluster_col]:
+        if col in tree_data.columns and tree_data[col].dtype == 'object':
+            tree_data[col] = tree_data[col].astype('category')
     
     # Train model WITH clusters
     model_with, train_with, tune_with, test_with = train_decision_tree(
@@ -457,7 +458,7 @@ def compare_models(data, target_col, cluster_col, drop_cols=None,
     # Predict and evaluate
     features_tune_with = tune_with.drop(columns=[target_col])
     predictions_with = model_with.predict(features_tune_with)
-    cm_with = confusion_matrix(predictions_with, tune_with[target_col])
+    cm_with = confusion_matrix(tune_with[target_col], predictions_with)
     
     # Train model WITHOUT clusters
     tree_data_nc = tree_data.drop(columns=[cluster_col])
@@ -469,7 +470,7 @@ def compare_models(data, target_col, cluster_col, drop_cols=None,
     # Predict and evaluate
     features_tune_without = tune_without.drop(columns=[target_col])
     predictions_without = model_without.predict(features_tune_without)
-    cm_without = confusion_matrix(predictions_without, tune_without[target_col])
+    cm_without = confusion_matrix(tune_without[target_col], predictions_without)
     
     results = {
         'model_with_clusters': model_with,

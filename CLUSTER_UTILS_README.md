@@ -33,7 +33,7 @@ See `example_usage.py` for a complete working example.
 ## Available Functions
 
 ### Data Loading
-- **`load_voting_data(dem_filepath, rep_filepath, encoding)`** - Load voting data from CSV files
+- **`load_voting_data(dem_filepath, rep_filepath=None, encoding='latin')`** - Load voting data from CSV files
 
 ### Clustering
 - **`perform_kmeans(data, n_clusters, random_state, columns)`** - Perform K-means clustering
